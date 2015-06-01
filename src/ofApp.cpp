@@ -218,17 +218,17 @@ void ofApp::draw(){
     
     //set overall font color
     ofSetColor(44, 62, 80);
-      //Part 1: basic info
-    ccScan.draw();
     
+    //Part 1: basic info
+    ccScan.draw();
     
     //The original Credit Card Swipe addon by Justin Maurer only parses credit card info
     //Please see the getBasicInfo() method in CreditCardScanner.cpp for how I parsed driver's license data
     
-    std::string city_raw = "";
-    std::string city = "";
-    std::string state = "";
-    std::string name = ccScan.getName();
+    city_raw = "";
+    city = "";
+    state = "";
+    name = ccScan.getName();
 
     //if the user has entered information, use that input
     //if not, use the information from the driver's license
@@ -255,8 +255,6 @@ void ofApp::draw(){
   // Driver's license does not have county information, but the health data is organized by counties.
   // so we need to look up the county by city and state in another JSON file
 
-    std::string countyID;
-
     if(city.length() > 0 && state.length() > 0){
         
         for(int h = 0; h < countyResult.size(); h++){
@@ -277,6 +275,7 @@ void ofApp::draw(){
                 if(ofToLower(cityVal_new) == city && countyResult[h]["ISO31662A2(State)"] == state )
                 {
                     countyID = countyResult[h]["FIPS 6-4(County(s))"].asString();
+                    BariolSmall.drawString("Press 'SHIFT' to start a new search or swipe driver's license again", 20, 60);
                     Bariol.drawString("Hi, "+ name, 20, 40 );
                     Bariol.drawString("Your location is: " + city + ", " + state, 200,  40);
                     Bariol.drawString("The data below is shown for: " + countyResult[h]["FormalName(County(s))"].asString(), 550, 40 );
@@ -284,8 +283,8 @@ void ofApp::draw(){
             }
     }else{
     
-        BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 250, ofGetHeight()/2);
-        BariolBig.drawString("Or press 'enter' to manually enter your information", ofGetWidth()/2 - 300, ofGetHeight()/2 + 80);
+        BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 250, ofGetHeight()/2 +20);
+        BariolBig.drawString("Or press 'enter' to manually enter your information", ofGetWidth()/2 - 350, ofGetHeight()/2 + 80);
     }
     
     //returns an error message if a matching county ID is not found
@@ -728,13 +727,23 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
   //press enter key to trigger the input window
-    if(ccScan.getName().length() <= 0 && key == OF_KEY_RETURN && cityInput.length() <= 0 ){
+    if(ccScan.getName().length()<= 0 && key == OF_KEY_RETURN && cityInput.length() <= 0 ){
         cityInput = ofSystemTextBoxDialog("What is your city?");
        // cout << cityInput << endl;
         if(cityInput.length() > 0 && stateInput.length() <= 0){
             
             stateInput = ofSystemTextBoxDialog("What is your state abbreviation?");
         }
+    }
+ 
+    //press shift resets everything and start a new search
+    if(key == OF_KEY_SHIFT){
+        
+        cityInput = "";
+        stateInput = "";
+        city = "";
+        state = "";
+        name = "";
     }
     
 

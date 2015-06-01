@@ -40,5 +40,10 @@ class ofApp : public ofBaseApp{
     
     string cityInput;
     string stateInput;
+    std::string city_raw;
+    std::string city;
+    std::string state;
+    std::string name;
+    std::string countyID;
 
 };
