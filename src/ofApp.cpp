@@ -8,7 +8,7 @@ void ofApp::setup(){
    // mToggleDebugBtn = ofRectangle( kLeftMargin, kTopMargin, kBtnSize.x, kBtnSize.y );
     ccScan.setup();
     ccScan.enableDebugMode();
-    
+
     ofTrueTypeFont::setGlobalDpi(72);
     
     Bariol.loadFont("Bariol.ttf", 20, true, true);
@@ -208,40 +208,58 @@ void ofApp::draw(){
     ofColor color3 = ofColor(242, 148, 148);
     ofColor color4 = ofColor(187, 232, 185);
 
-    
     ofColor colorArray [4]= {color1, color2, color3,color4};
     ofFill();
     for (int i = 0; i < 4; i++) {
         ofSetColor(colorArray[i]);
           ofRect(0, 68 + 175 * i, ofGetWidth(), 175 );
     }
+    
+    
     //set overall font color
     ofSetColor(44, 62, 80);
-    
-    //Part 1: basic info
+      //Part 1: basic info
     ccScan.draw();
+    
     
     //The original Credit Card Swipe addon by Justin Maurer only parses credit card info
     //Please see the getBasicInfo() method in CreditCardScanner.cpp for how I parsed driver's license data
     
-    //this is for testing purpose when I don't have driver's license to swipe
-//    std::string state = "MI";
-//    std::string city = ofToLower("DETROIT");
-
-    
-    std::string state = ccScan.getState();
-    std::string city = ofToLower(ccScan.getCity());
+    std::string city_raw = "";
+    std::string city = "";
+    std::string state = "";
     std::string name = ccScan.getName();
+
+    //if the user has entered information, use that input
+    //if not, use the information from the driver's license
+    if(cityInput.length() > 0 && stateInput.length() >0){
+        city_raw = ofToLower(cityInput);
+        //clean up the input data
+        for(int j = 0; j < city_raw.length(); j++){
+            if (!isspace(city_raw[j])){
+                city += city_raw[j];
+            }
+        }
+        
+        state = ofToUpper(stateInput);
+    }else {
+        state = ccScan.getState();
+        city = ofToLower(ccScan.getCity());
+        
+    }
+
+    cout << city + "," + state <<endl;
 
   //  cout << "ofApp: " << state << "," << city << endl;
     
   // Driver's license does not have county information, but the health data is organized by counties.
   // so we need to look up the county by city and state in another JSON file
-    
+
     std::string countyID;
 
     if(city.length() > 0 && state.length() > 0){
-            for(int h = 0; h < countyResult.size(); h++){
+        
+        for(int h = 0; h < countyResult.size(); h++){
         
                 std::string cityVal = countyResult[h]["ShortName(City)"].asString();
                 
@@ -267,11 +285,12 @@ void ofApp::draw(){
     }else{
     
         BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 250, ofGetHeight()/2);
+        BariolBig.drawString("Or press 'enter' to manually enter your information", ofGetWidth()/2 - 300, ofGetHeight()/2 + 80);
     }
     
     //returns an error message if a matching county ID is not found
     if(city.length() > 0 && state.length() > 0 && countyID.length() <= 0){
-            BariolBig.drawString("Error processing your driver's license", ofGetWidth()/2 - 200, ofGetHeight()/2);
+            BariolBig.drawString("No matching data found", ofGetWidth()/2 - 200, ofGetHeight()/2);
     }
     
     //cout << countyID << "," << state <<endl;
@@ -647,7 +666,7 @@ void ofApp::draw(){
                ){
                 //do nothing
             }else{
-            Bariol.drawString("Few Fruit/Vegetable rate: " +riskFactorResult[i]["Few_Fruit_Veg"].asString()+ "%", 20, 680);
+            Bariol.drawString("Few Fruit/Vegetable rate: " + ofToString(round(riskFactorResult[i]["Few_Fruit_Veg"].asFloat() ) )+ "%", 20, 680);
                 
             }
             
@@ -708,6 +727,16 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+  //press enter key to trigger the input window
+    if(ccScan.getName().length() <= 0 && key == OF_KEY_RETURN && cityInput.length() <= 0 ){
+        cityInput = ofSystemTextBoxDialog("What is your city?");
+       // cout << cityInput << endl;
+        if(cityInput.length() > 0 && stateInput.length() <= 0){
+            
+            stateInput = ofSystemTextBoxDialog("What is your state abbreviation?");
+        }
+    }
+    
 
 }
 

@@ -37,5 +37,8 @@ class ofApp : public ofBaseApp{
         ofTrueTypeFont BariolSmall;
         private:
             ofRectangle                     mToggleDebugBtn;
-    std::string url;
+    
+    string cityInput;
+    string stateInput;
+
 };
