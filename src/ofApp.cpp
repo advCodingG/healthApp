@@ -103,41 +103,7 @@ void ofApp::setup(){
     }
     else
     {
-        //ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
-    
-    //load the demographic data
-    std::string demographic = "demographic.json";
-    bool parsingSuccessful4 = demographicResult.open(demographic);
-    
-    if (parsingSuccessful4)
-    {
-        ofLogNotice("ofApp::setup") << demographicResult.getRawString();
-        
-        // now write pretty print
-        if (!demographicResult.save("demographicResult_output_pretty.json", true))
-        {
-            //ofLogNotice("ofApp::setup") << "demographicResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "demographicResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!demographicResult.save("demographicResult_output_fast.json", false))
-        {
-            //ofLogNotice("ofApp::setup") << "demographicResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "demographicResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-        //ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
     }
     
 //load the vulnerable population data
@@ -171,7 +137,7 @@ void ofApp::setup(){
     }
     else
     {
-      //  ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+       ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
     }
 //load the risk factor data
     
@@ -205,7 +171,7 @@ void ofApp::setup(){
     }
     else
     {
-       // ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
     }
     
 //load the state and county data
@@ -220,21 +186,21 @@ void ofApp::setup(){
         // now write pretty print
         if (!countyResult.save("countyResult_output_pretty.json", true))
         {
-             ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
+            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
         }
         else
         {
-             ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
+           //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
         }
         
         // now write without pretty print
         if (!countyResult.save("countyResult_output_fast.json", false))
         {
-             ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
+           //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
         }
         else
         {
-             ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
+            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
         }
         
     }
@@ -267,9 +233,12 @@ void ofApp::draw(){
     }
     
     ofSetColor(0);
+    
     //Part 1: basic info
     ccScan.draw();
     
+    //The original Credit Card Swipe addon by Justin Maurer only parses credit card info
+    //Please see the getBasicInfo() method in CreditCardScanner.cpp for how I parsed driver's license data
     std::string state = ccScan.getState();
     std::string city = ofToLower(ccScan.getCity());
     std::string name = ccScan.getName();
@@ -282,27 +251,29 @@ void ofApp::draw(){
     std::string countyID;
 
     if(city.length() > 0 && state.length() > 0){
-    for(int h = 0; h < countyResult.size(); h++){
+            for(int h = 0; h < countyResult.size(); h++){
         
-        std::string cityVal = countyResult[h]["ShortName(City)"].asString();
-        std::string cityVal_new = "";
-        for(int j = 0; j < cityVal.length(); j++){
-            if (!isspace(cityVal[j])){
-                cityVal_new += cityVal[j];
+                std::string cityVal = countyResult[h]["ShortName(City)"].asString();
+                
+                //we need to clean up the city name so that it does not contain any white-space character
+                //because the city data from the driver's license does not have any
+                std::string cityVal_new = "";
+                for(int j = 0; j < cityVal.length(); j++){
+                    if (!isspace(cityVal[j])){
+                        cityVal_new += cityVal[j];
+                    }
+                }
+                // cout << cityVal << endl;
+
+                //look up the county information based on city and state
+                if(ofToLower(cityVal_new) == city && countyResult[h]["ISO31662A2(State)"] == state )
+                {
+                    countyID = countyResult[h]["FIPS 6-4(County(s))"].asString();
+                    Bariol.drawString("Hi, "+ name, 20, 40 );
+                    Bariol.drawString("Your location is: " + city + ", " + state, 200,  40);
+                    Bariol.drawString("The data below is shown for: " + countyResult[h]["FormalName(County(s))"].asString(), 550, 40 );
+                }
             }
-        }
-       // cout << cityVal << endl;
-
-        if(ofToLower(cityVal_new) == city && countyResult[h]["ISO31662A2(State)"] == state )
-        {
-            countyID = countyResult[h]["FIPS 6-4(County(s))"].asString();
-            Bariol.drawString("Hi, "+ name, 20, 40 );
-            Bariol.drawString("Your location is: " + city + ", " + state, 200,  40);
-            Bariol.drawString("The data below is shown for: " + countyResult[h]["FormalName(County(s))"].asString(), 550, 40 );
-        }
-
-
-        }
     }else{
     
         BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 300, ofGetHeight()/2);
@@ -310,7 +281,7 @@ void ofApp::draw(){
     //cout << countyID << "," << state <<endl;
     
     //Part 2: health summary
-    //fetch the appropriate data from the json file based on county ID
+    //fetch the appropriate data from the health summary json file based on county ID
     
    
     for(int i = 0; i < summaryResult.size(); i++){
@@ -502,7 +473,7 @@ void ofApp::draw(){
             //remove the last comma in the string
 
             unfavorable.erase(unfavorable.find_last_of(","), 1);
-            //if the string gets too long and don't fit in the window, change to a smaller font size
+            //if the string gets too long and doesn't fit in the window, switch to a smaller font size
             if(Bariol.stringWidth(unfavorable) >= ofGetWidth()){
                 BariolSmall.drawString( unfavorable, 20, 330);
                 
@@ -558,7 +529,7 @@ void ofApp::draw(){
             //remove the last comma in the string
             favorable.erase(favorable.find_last_of(","), 1);
 
-            //if the string gets too long and don't fit in the window, change to a smaller font size
+            //if the string gets too long and doesn't fit in the window, switch to a smaller font size
             if(Bariol.stringWidth(favorable) >= ofGetWidth()){
                  BariolSmall.drawString( favorable, 20, 380);
             
@@ -590,14 +561,14 @@ void ofApp::draw(){
                ){
                 //do nothing
                 }else{
-                    float NoHSRate = round(vulnerableResult[i]["No_HS_Diploma"].asFloat()/demographicResult[i]["Population_Size"].asFloat() * 100) ;
+                    float NoHSRate = round(vulnerableResult[i]["No_HS_Diploma"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100) ;
                     Bariol.drawString("No High School Diploma Rate (Age > 25) : " + ofToString(NoHSRate) + "%", 20, 480);
                 }
             
             if(vulnerableResult[i]["Unemployed"] == -9999){
                 //do nothing
             }else{
-                float UnemploymentRate = round(vulnerableResult[i]["Unemployed"].asFloat()/demographicResult[i]["Population_Size"].asFloat() * 100);
+                float UnemploymentRate = round(vulnerableResult[i]["Unemployed"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100);
             
                 Bariol.drawString("Unemployment rate: " + ofToString(UnemploymentRate) + "%", 20, 500);
             }
@@ -612,7 +583,7 @@ void ofApp::draw(){
                ){
                 //do nothing
             }else{
-                float disabledRate = round(vulnerableResult[i]["Sev_Work_Disabled"].asFloat()/demographicResult[i]["Population_Size"].asFloat() * 100 );
+                float disabledRate = round(vulnerableResult[i]["Sev_Work_Disabled"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100 );
             
                 Bariol.drawString("Severely work disabled rate: " + ofToString(disabledRate) + "%", 20, 520);
             }
@@ -626,7 +597,7 @@ void ofApp::draw(){
                ){
                 //do nothing
             }else{
-                float depressionRate = round(vulnerableResult[i]["Major_Depression"].asFloat()/demographicResult[i]["Population_Size"].asFloat() * 100 );
+                float depressionRate = round(vulnerableResult[i]["Major_Depression"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100 );
             
                 Bariol.drawString("Major depression rate: " + ofToString(depressionRate) + "%", 20, 540);
             }
@@ -641,7 +612,7 @@ void ofApp::draw(){
                ){
                 //do nothing
             }else{
-                float drugRate = round(vulnerableResult[i]["Recent_Drug_Use"].asFloat()/demographicResult[i]["Population_Size"].asFloat() * 100 );
+                float drugRate = round(vulnerableResult[i]["Recent_Drug_Use"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100 );
             
                 Bariol.drawString("Recent Drug User rate: " + ofToString(drugRate) + "%", 20, 560);
             
@@ -649,7 +620,7 @@ void ofApp::draw(){
      
         }
     }
-    //Part 5: Risk Factors for Premature Death include risk factors for the nation's leading killers of heart disease and cancer as well as personal behaviors and lifestyles choices.
+//Part 5: Risk Factors for Premature Death include risk factors for the nation's leading killers of heart disease and cancer as well as personal behaviors and lifestyles choices.
     
     for(int i = 0; i < riskFactorResult.size(); i++){
         
@@ -736,34 +707,6 @@ void ofApp::draw(){
    
         }
     }
-
-    
-    
-    // ss << "phoneNumber:number = " << result["phoneNumber"][i]["number"].asString() << std::endl;
-    // ss << "phoneNumber:type   = " << result["phoneNumber"][i+1]["type"].asString() << std::endl;
-    // ss << "phoneNumber:number = " << result["phoneNumber"][i+1]["number"].asString() << std::endl;
-    
-//    ofDrawBitmapString(ss.str(), 10, 14);
-
-    
-    
-   
-     //   ofClear( ofColor::white );
-    // Credit Card Scanner Debug
-    //mCreditCardScanner.draw();
-    
-    // Debug Button
- //   ofSetColor( kBtnColor );
-   // ofRect( mToggleDebugBtn );
-    
-    //ofSetColor( ofColor::black );
-    //ofDrawBitmapString("Toggle Debug", mToggleDebugBtn.getLeft(), mToggleDebugBtn.getTop() - kTextToBtnSpacing);
-    
-  //  ofSetColor( ofColor::black );
-
-    
-
-   
 
 }
 
