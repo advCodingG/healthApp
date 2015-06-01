@@ -3,22 +3,6 @@
 #include <string>
 #include <cstring>
 
-
-// Margin constants
-const float kLeftMargin                 =       100.0f;
-const float kTopMargin                  =       100.0f;
-
-// Spacing Constants
-const float kVerticalBtnSpacing         =       30.0f;
-const float kTextToBtnSpacing           =       5.0f;
-
-// Sizing Constants
-ofVec2f     kBtnSize                    =       ofVec2f( 100.0f, 50.0f );
-
-// Color Constants
-ofColor     kBtnColor                   =       ofColor( 206.0f, 32.0f, 41.0f );
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
    // mToggleDebugBtn = ofRectangle( kLeftMargin, kTopMargin, kBtnSize.x, kBtnSize.y );
@@ -35,7 +19,7 @@ void ofApp::setup(){
     BariolBig.setLineHeight(18.0f);
     BariolBig.setLetterSpacing(1.05);
     BariolSmall.setLineHeight(18.0f);
-    BariolSmall.setLetterSpacing(1.08);
+    BariolSmall.setLetterSpacing(1.1);
     
   
     // load the health summary json data
@@ -231,14 +215,20 @@ void ofApp::draw(){
         ofSetColor(colorArray[i]);
           ofRect(0, 68 + 175 * i, ofGetWidth(), 175 );
     }
-    
-    ofSetColor(0);
+    //set overall font color
+    ofSetColor(44, 62, 80);
     
     //Part 1: basic info
     ccScan.draw();
     
     //The original Credit Card Swipe addon by Justin Maurer only parses credit card info
     //Please see the getBasicInfo() method in CreditCardScanner.cpp for how I parsed driver's license data
+    
+    //this is for testing purpose when I don't have driver's license to swipe
+//    std::string state = "MI";
+//    std::string city = ofToLower("DETROIT");
+
+    
     std::string state = ccScan.getState();
     std::string city = ofToLower(ccScan.getCity());
     std::string name = ccScan.getName();
@@ -276,8 +266,14 @@ void ofApp::draw(){
             }
     }else{
     
-        BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 300, ofGetHeight()/2);
+        BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 250, ofGetHeight()/2);
     }
+    
+    //returns an error message if a matching county ID is not found
+    if(city.length() > 0 && state.length() > 0 && countyID.length() <= 0){
+            BariolBig.drawString("Error processing your driver's license", ofGetWidth()/2 - 200, ofGetHeight()/2);
+    }
+    
     //cout << countyID << "," << state <<endl;
     
     //Part 2: health summary
@@ -314,7 +310,7 @@ void ofApp::draw(){
             }
             
             
-            Bariol.drawString("Average life expectancy: " + ALE, 100, 140);
+            Bariol.drawString("Average life expectancy: " + ofToString(round(ofToFloat(ALE))), 100, 140);
             Bariol.drawString("US average: " + US_ALE, 700, 140);
             
             
@@ -358,7 +354,7 @@ void ofApp::draw(){
             
             Bariol.drawString("Self-rated health status: " + healthStatus, 100, 180);
             Bariol.drawString("US average: " + US_HealthStatus, 700, 180);
-            
+            BariolSmall.drawString("Note: the smaller the number is, the better the self-rated health is" ,50, 200);
             
             if(ofToFloat( healthStatus) < ofToFloat( US_HealthStatus)){
                 
@@ -562,7 +558,7 @@ void ofApp::draw(){
                 //do nothing
                 }else{
                     float NoHSRate = round(vulnerableResult[i]["No_HS_Diploma"].asFloat()/vulnerableResult[i]["Population_Size"].asFloat() * 100) ;
-                    Bariol.drawString("No High School Diploma Rate (Age > 25) : " + ofToString(NoHSRate) + "%", 20, 480);
+                    Bariol.drawString("No high school diploma rate (age > 25) : " + ofToString(NoHSRate) + "%", 20, 480);
                 }
             
             if(vulnerableResult[i]["Unemployed"] == -9999){
