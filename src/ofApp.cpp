@@ -432,7 +432,7 @@ void ofApp::draw(){
         }
     }
     
-    //Part 2: Relative Health Indicator: Relative Health Importance is designed to provide a quick and easy method for assessing one's county health relative to others. Data is presented that highlights favorable and unfavorable health status between peer counties and the nation at large.
+    //Part 3: Relative Health Indicator: Relative Health Importance is designed to provide a quick and easy method for assessing one's county health relative to others. Data is presented that highlights favorable and unfavorable health status between peer counties and the nation at large.
     for(int j = 0; j < RHIResult.size(); j++){
         
         
@@ -556,7 +556,7 @@ void ofApp::draw(){
         
     }
     
-//Part 3: Vunerable Populations are estimates of individuals in designated categories who tend to have poorer health status and more medical needs than the general population.
+//Part 4: Vunerable Populations are estimates of individuals in designated categories who tend to have poorer health status and more medical needs than the general population.
     
     
     for(int i = 0; i < vulnerableResult.size(); i++){
