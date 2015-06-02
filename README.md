@@ -2,6 +2,7 @@
 
 This health app is a database searching tool for obtaining government data on health status in all counties of the United States. 
 The raw data (in csv format) was originally downloaded from http://data.gov/. I took the .csv files and converted them to JSON for the convenience of sorting and parsing. 
+!['application screenshot'](https://github.com/advCodingG/healthApp/blob/master/assets/screenshot1.png)
 
 This openframeworks application can take location input in two different ways:
 - Text input window:
@@ -12,7 +13,7 @@ You can manually type in your city and state to look up the health status data i
 - Swipe driver's license:
 The driver's license in some states comes with a magnetic stripe. This applciation allows you to obtain a report of your data by simply swiping your driver's license.
 I used a magTek magnetic card reader and the ofxCreditCardSwiper addon written by Justin Maurer (https://github.com/fakelove/ofxCreditCardSwiper). 
-The addon only parses credit card information but I wrote my own method to parse driver's license data and was able to return the city and state information from it.
+The addon only parses credit card information but I wrote my own method (see getBasicInfo() in CreditCardScanner.cpp) to parse driver's license data and was able to return the city and state information from it.
 
 Here is a sample of the health status report that the user can receive: 
 !['input window screenshot report'](https://github.com/advCodingG/healthApp/blob/master/assets/screenshot4.png)
