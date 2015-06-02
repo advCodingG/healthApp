@@ -21,177 +21,12 @@ void ofApp::setup(){
     BariolSmall.setLineHeight(18.0f);
     BariolSmall.setLetterSpacing(1.1);
     
-  
-    // load the health summary json data
-    std::string summary = "summary.json";
-    bool parsingSuccessful = summaryResult.open(summary);
-    
-    if (parsingSuccessful)
-    {
-       // ofLogNotice("ofApp::setup") << summaryResult.getRawString();
-        
-        // now write pretty print
-        if (!summaryResult.save("summaryResult_output_pretty.json", true))
-        {
-            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!summaryResult.save("summaryResult_output_fast.json", false))
-        {
-           // ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
-    
-// load the relative health importance json data
-    std::string RHI = "relativeHealthImportance.json";
-    bool parsingSuccessful2 = RHIResult.open(RHI);
-    
-    if (parsingSuccessful2)
-    {
-        //ofLogNotice("ofApp::setup") << RHIResult.getRawString();
-        
-        // now write pretty print
-        if (!RHIResult.save("RHIResult_output_pretty.json", true))
-        {
-            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!RHIResult.save("RHIResult_output_fast.json", false))
-        {
-            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
-    
-//load the vulnerable population data
-    std::string vulnerable = "vulnerable.json";
-    bool parsingSuccessful3 = vulnerableResult.open(vulnerable);
-    
-    if (parsingSuccessful3)
-    {
-        //ofLogNotice("ofApp::setup") << vulnerableResult.getRawString();
-        
-        // now write pretty print
-        if (!vulnerableResult.save("vulnerableResult_output_pretty.json", true))
-        {
-           // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-           // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!vulnerableResult.save("vulnerableResult_output_fast.json", false))
-        {
-           // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-           // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-       ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
-//load the risk factor data
-    
-    std::string riskFactor = "riskFactor.json";
-    bool parsingSuccessful5 = riskFactorResult.open(riskFactor);
-    
-    if (parsingSuccessful5)
-    {
-        //ofLogNotice("ofApp::setup") << riskFactorResult.getRawString();
-        
-        // now write pretty print
-        if (!riskFactorResult.save("riskFactorResult_output_pretty.json", true))
-        {
-           // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-           // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!riskFactorResult.save("riskFactorResult_output_fast.json", false))
-        {
-           // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-           // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
-    
-//load the state and county data
-    
-    std::string countyJSON = "stateCounty.json";
-    bool parsingSuccessful6 = countyResult.open(countyJSON);
-    
-    if (parsingSuccessful6)
-    {
-        //ofLogNotice("ofApp::setup") << riskFactorResult.getRawString();
-        
-        // now write pretty print
-        if (!countyResult.save("countyResult_output_pretty.json", true))
-        {
-            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-           //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
-        }
-        
-        // now write without pretty print
-        if (!countyResult.save("countyResult_output_fast.json", false))
-        {
-           //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
-        }
-        else
-        {
-            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
-        }
-        
-    }
-    else
-    {
-         ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
-    }
+    loadSummary();
+    loadRHI();
+    loadVulnerable();
+    loadRiskFactor();
+    loadCounty();
+
 }
 
 //--------------------------------------------------------------
@@ -202,20 +37,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(255);
-    ofColor color1 = ofColor(178, 232, 255);
-    ofColor color2 = ofColor(255, 236, 162);
-    ofColor color3 = ofColor(242, 148, 148);
-    ofColor color4 = ofColor(187, 232, 185);
-
-    ofColor colorArray [4]= {color1, color2, color3,color4};
-    ofFill();
-    for (int i = 0; i < 4; i++) {
-        ofSetColor(colorArray[i]);
-          ofRect(0, 68 + 175 * i, ofGetWidth(), 175 );
-    }
-    
-    
+    initialize();
     //set overall font color
     ofSetColor(44, 62, 80);
     
@@ -224,7 +46,6 @@ void ofApp::draw(){
     
     //The original Credit Card Swipe addon by Justin Maurer only parses credit card info
     //Please see the getBasicInfo() method in CreditCardScanner.cpp for how I parsed driver's license data
-    
     city_raw = "";
     city = "";
     state = "";
@@ -245,7 +66,6 @@ void ofApp::draw(){
     }else {
         state = ccScan.getState();
         city = ofToLower(ccScan.getCity());
-        
     }
 
     cout << city + "," + state <<endl;
@@ -256,7 +76,7 @@ void ofApp::draw(){
   // so we need to look up the county by city and state in another JSON file
 
     if(city.length() > 0 && state.length() > 0){
-        
+
         for(int h = 0; h < countyResult.size(); h++){
         
                 std::string cityVal = countyResult[h]["ShortName(City)"].asString();
@@ -275,16 +95,19 @@ void ofApp::draw(){
                 if(ofToLower(cityVal_new) == city && countyResult[h]["ISO31662A2(State)"] == state )
                 {
                     countyID = countyResult[h]["FIPS 6-4(County(s))"].asString();
-                    BariolSmall.drawString("Press 'SHIFT' to start a new search or swipe driver's license again", 20, 60);
+                    ofSetColor(242, 148, 148);
+                    BariolSmall.drawString("Click anywhere on the screen to start a new search or swipe another driver's license", 20, 20);
+                    ofSetColor(44, 62, 80);
                     Bariol.drawString("Hi, "+ name, 20, 40 );
                     Bariol.drawString("Your location is: " + city + ", " + state, 200,  40);
                     Bariol.drawString("The data below is shown for: " + countyResult[h]["FormalName(County(s))"].asString(), 550, 40 );
                 }
             }
     }else{
-    
+
+        ofSetColor(44, 62, 80);
         BariolBig.drawString("Swipe your driver's license to continue", ofGetWidth()/2 - 250, ofGetHeight()/2 +20);
-        BariolBig.drawString("Or press 'enter' to manually enter your information", ofGetWidth()/2 - 350, ofGetHeight()/2 + 80);
+        BariolBig.drawString("Or click anywhere on the screen to manually enter your information", ofGetWidth()/2 - 450, ofGetHeight()/2 + 80);
     }
     
     //returns an error message if a matching county ID is not found
@@ -331,6 +154,7 @@ void ofApp::draw(){
             Bariol.drawString("Average life expectancy: " + ofToString(round(ofToFloat(ALE))), 100, 140);
             Bariol.drawString("US average: " + US_ALE, 700, 140);
             
+            //compare the local data with the US average
             
             if(ofToFloat( ALE) < ofToFloat( US_ALE)){
                 
@@ -564,7 +388,7 @@ void ofApp::draw(){
         
         if(summaryResult[i]["County_FIPS_Code"].asString() == countyID &&
            summaryResult[i]["CHSI_State_Abbr"].asString() == state){
-            BariolBig.drawString("Vunerable Populations", 20, 455);
+            BariolBig.drawString("Vulnerable Populations", 20, 455);
           
             if(vulnerableResult[i]["No_HS_Diploma"] == -2222.2 ||
                vulnerableResult[i]["No_HS_Diploma"] == -2222 ||
@@ -724,31 +548,213 @@ void ofApp::draw(){
 
 }
 
+
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-  //press enter key to trigger the input window
-    if(ccScan.getName().length()<= 0 && key == OF_KEY_RETURN && cityInput.length() <= 0 ){
-        cityInput = ofSystemTextBoxDialog("What is your city?");
-       // cout << cityInput << endl;
-        if(cityInput.length() > 0 && stateInput.length() <= 0){
-            
-            stateInput = ofSystemTextBoxDialog("What is your state abbreviation?");
-        }
-    }
- 
-    //press shift resets everything and start a new search
-    if(key == OF_KEY_SHIFT){
-        
-        cityInput = "";
-        stateInput = "";
-        city = "";
-        state = "";
-        name = "";
-    }
+
+void ofApp::loadSummary(){
+    // load the health summary json data
+    std::string summary = "summary.json";
+    bool parsingSuccessful = summaryResult.open(summary);
     
+    if (parsingSuccessful)
+    {
+        // ofLogNotice("ofApp::setup") << summaryResult.getRawString();
+        
+        // now write pretty print
+        if (!summaryResult.save("summaryResult_output_pretty.json", true))
+        {
+            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written successfully.";
+        }
+        
+        // now write without pretty print
+        if (!summaryResult.save("summaryResult_output_fast.json", false))
+        {
+            // ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            //ofLogNotice("ofApp::setup") << "summaryResult_output_pretty.json written successfully.";
+        }
+        
+    }
+    else
+    {
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+    }
 
 }
+//--------------------------------------------------------------
+void ofApp::loadRHI(){
+    
+    // load the relative health importance json data
+    std::string RHI = "relativeHealthImportance.json";
+    bool parsingSuccessful2 = RHIResult.open(RHI);
+    
+    if (parsingSuccessful2)
+    {
+        //ofLogNotice("ofApp::setup") << RHIResult.getRawString();
+        
+        // now write pretty print
+        if (!RHIResult.save("RHIResult_output_pretty.json", true))
+        {
+            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written successfully.";
+        }
+        
+        // now write without pretty print
+        if (!RHIResult.save("RHIResult_output_fast.json", false))
+        {
+            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            //ofLogNotice("ofApp::setup") << "RHIResult_output_pretty.json written successfully.";
+        }
+        
+    }
+    else
+    {
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+    }
 
+}
+//--------------------------------------------------------------
+void ofApp::loadVulnerable(){
+    //load the vulnerable population data
+    std::string vulnerable = "vulnerable.json";
+    bool parsingSuccessful3 = vulnerableResult.open(vulnerable);
+    
+    if (parsingSuccessful3)
+    {
+        //ofLogNotice("ofApp::setup") << vulnerableResult.getRawString();
+        
+        // now write pretty print
+        if (!vulnerableResult.save("vulnerableResult_output_pretty.json", true))
+        {
+            // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written successfully.";
+        }
+        
+        // now write without pretty print
+        if (!vulnerableResult.save("vulnerableResult_output_fast.json", false))
+        {
+            // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            // ofLogNotice("ofApp::setup") << "vulnerableResult_output_pretty.json written successfully.";
+        }
+        
+    }
+    else
+    {
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+    }
+
+}
+//--------------------------------------------------------------
+void ofApp::loadRiskFactor(){
+    //load the risk factor data
+    
+    std::string riskFactor = "riskFactor.json";
+    bool parsingSuccessful5 = riskFactorResult.open(riskFactor);
+    
+    if (parsingSuccessful5)
+    {
+        //ofLogNotice("ofApp::setup") << riskFactorResult.getRawString();
+        
+        // now write pretty print
+        if (!riskFactorResult.save("riskFactorResult_output_pretty.json", true))
+        {
+            // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written successfully.";
+        }
+        
+        // now write without pretty print
+        if (!riskFactorResult.save("riskFactorResult_output_fast.json", false))
+        {
+            // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            // ofLogNotice("ofApp::setup") << "riskFactorResult_output_pretty.json written successfully.";
+        }
+        
+    }
+    else
+    {
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+    }
+
+
+}
+//--------------------------------------------------------------
+void ofApp::loadCounty(){
+    //load the state and county data
+    
+    std::string countyJSON = "stateCounty.json";
+    bool parsingSuccessful6 = countyResult.open(countyJSON);
+    
+    if (parsingSuccessful6)
+    {
+        //ofLogNotice("ofApp::setup") << riskFactorResult.getRawString();
+        
+        // now write pretty print
+        if (!countyResult.save("countyResult_output_pretty.json", true))
+        {
+            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
+        }
+        
+        // now write without pretty print
+        if (!countyResult.save("countyResult_output_fast.json", false))
+        {
+            //  ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written unsuccessfully.";
+        }
+        else
+        {
+            // ofLogNotice("ofApp::setup") << "countyResult_output_pretty.json written successfully.";
+        }
+        
+    }
+    else
+    {
+        ofLogError("ofApp::setup")  << "Failed to parse JSON" << endl;
+    }
+
+}
+//--------------------------------------------------------------
+void ofApp::initialize(){
+    
+    ofBackground(255);
+    ofColor color1 = ofColor(178, 232, 255);
+    ofColor color2 = ofColor(255, 236, 162);
+    ofColor color3 = ofColor(246, 145, 110);
+    ofColor color4 = ofColor(242, 148, 148);
+    
+    ofColor colorArray [4]= {color1, color2, color3,color4};
+    ofFill();
+    for (int i = 0; i < 4; i++) {
+        ofSetColor(colorArray[i]);
+        ofRect(0, 68 + 175 * i, ofGetWidth(), 175 );
+    }
+}
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
@@ -766,9 +772,35 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    //the input window is triggered by mouse clicking
+    if(button == OF_MOUSE_BUTTON_LEFT){
+        //reset everything
+        cityInput = "";
+        stateInput = "";
+        city="";
+        state ="";
+        name ="";
+        cityInput = ofSystemTextBoxDialog("What is your city?");
+        // cout << cityInput << endl;
+        if(cityInput.length() > 0 && stateInput.length() <= 0){
+            stateInput = ofSystemTextBoxDialog("What is your state abbreviation?");
+        }
+    }
 
 }
-
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+    //clear out the input as the user types
+    //this makes sure the information gets refreshsed when typing is followed by swiping action
+    if(cityInput.length() > 0 && stateInput.length() > 0){
+        cityInput = "";
+        stateInput = "";
+        city="";
+        state ="";
+        name ="";
+    }
+    
+}
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 

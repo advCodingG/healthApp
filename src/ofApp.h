@@ -24,6 +24,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
+        void loadSummary();
+        void loadRHI();
+        void loadVulnerable();
+        void loadRiskFactor();
+        void loadCounty();
+        void initialize();
+    
         ofxJSONElement countyResult;
         ofxJSONElement summaryResult;
         ofxJSONElement RHIResult;
